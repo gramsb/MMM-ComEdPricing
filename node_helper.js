@@ -1,5 +1,4 @@
 const NodeHelper = require("node_helper");
-const fetch = require("node-fetch");
 
 module.exports = NodeHelper.create({
     start: function() {
@@ -12,17 +11,20 @@ module.exports = NodeHelper.create({
         }
     },
 
-    fetchData: function() {
-        Promise.all([
-            fetch("https://hourlypricing.comed.com/api?type=5minutefeed").then(res => res.json()),
-        ])
-        .then((results) => {
-            const currentPrice = parseFloat(results[0][0].price);
-            const lastPrice = parseFloat(results[0][1].price);
-            this.sendSocketNotification("DATA_FETCHED", { currentPrice, lastPrice });
-        })
-        .catch((error) => {
+    async fetchData() {
+        try {
+            const fetch = (await import("node-fetch")).default;
+            const responses = await Promise.all([
+                fetch("https://hourlypricing.comed.com/api?type=5minutefeed").then(res => res.json()),
+                fetch("https://hourlypricing.comed.com/api?type=currenthouraverage").then(res => res.json())
+            ]);
+
+            const current5MinPrice = parseFloat(responses[0][0].price);
+            const last5MinPrice = parseFloat(responses[0][1].price);
+            const currentHourPrice = parseFloat(responses[1][0].price);
+            this.sendSocketNotification("DATA_FETCHED", { current5MinPrice, last5MinPrice, currentHourPrice });
+        } catch (error) {
             console.error("Error fetching data:", error);
-        });
+        }
     }
 });
