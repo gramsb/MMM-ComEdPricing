@@ -8,8 +8,9 @@ Module.register("MMM-ComEdPricing", {
     },
 
     start: function() {
-        this.currentPrice = null;
-        this.lastPrice = null;
+        this.current5MinPrice = null;
+        this.last5MinPrice = null;
+        this.currentHourPrice = null;
         this.sendSocketNotification("FETCH_DATA");
         setInterval(() => {
             this.sendSocketNotification("FETCH_DATA");
@@ -18,24 +19,28 @@ Module.register("MMM-ComEdPricing", {
 
     socketNotificationReceived: function(notification, payload) {
         if (notification === "DATA_FETCHED") {
-            this.lastPrice = this.currentPrice;
-            this.currentPrice = payload.currentPrice;
+            this.last5MinPrice = this.current5MinPrice;
+            this.current5MinPrice = payload.current5MinPrice;
+            this.currentHourPrice = payload.currentHourPrice;
             this.updateDom();
         }
     },
 
     getDom: function() {
         let wrapper = document.createElement("div");
-        if (this.currentPrice !== null) {
+        if (this.current5MinPrice !== null && this.currentHourPrice !== null) {
             let priceElement = document.createElement("div");
-            priceElement.innerHTML = `Current Price: ${this.currentPrice}¢/kWh`;
+            priceElement.innerHTML = `Current 5-Min Price: ${this.current5MinPrice}¢/kWh`;
+
+            let hourPriceElement = document.createElement("div");
+            hourPriceElement.innerHTML = `Current Hour Avg Price: ${this.currentHourPrice}¢/kWh`;
 
             let arrowElement = document.createElement("div");
-            if (this.lastPrice !== null) {
-                if (this.currentPrice > this.lastPrice) {
+            if (this.last5MinPrice !== null) {
+                if (this.current5MinPrice > this.last5MinPrice) {
                     arrowElement.innerHTML = "&#9650;"; // Up arrow
                     arrowElement.style.color = "green";
-                } else if (this.currentPrice < this.lastPrice) {
+                } else if (this.current5MinPrice < this.last5MinPrice) {
                     arrowElement.innerHTML = "&#9660;"; // Down arrow
                     arrowElement.style.color = "red";
                 } else {
@@ -45,6 +50,7 @@ Module.register("MMM-ComEdPricing", {
             }
 
             wrapper.appendChild(priceElement);
+            wrapper.appendChild(hourPriceElement);
             wrapper.appendChild(arrowElement);
         } else {
             wrapper.innerHTML = "Loading...";
