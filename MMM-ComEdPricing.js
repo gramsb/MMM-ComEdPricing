@@ -39,10 +39,10 @@ Module.register("MMM-ComEdPricing", {
             if (this.last5MinPrice !== null) {
                 if (this.current5MinPrice > this.last5MinPrice) {
                     arrowElement.innerHTML = "&#9650;"; // Up arrow
-                    arrowElement.style.color = "green";
+                    arrowElement.style.color = "red";
                 } else if (this.current5MinPrice < this.last5MinPrice) {
                     arrowElement.innerHTML = "&#9660;"; // Down arrow
-                    arrowElement.style.color = "red";
+                    arrowElement.style.color = "green";
                 } else {
                     arrowElement.innerHTML = "&#9654;"; // Right arrow
                     arrowElement.style.color = "gray";
