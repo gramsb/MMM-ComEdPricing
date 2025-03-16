@@ -11,6 +11,7 @@ Module.register("MMM-ComEdPricing", {
         this.current5MinPrice = null;
         this.last5MinPrice = null;
         this.currentHourPrice = null;
+	this.currentTime = null;
         this.sendSocketNotification("FETCH_DATA");
         setInterval(() => {
             this.sendSocketNotification("FETCH_DATA");
@@ -22,6 +23,7 @@ Module.register("MMM-ComEdPricing", {
             this.last5MinPrice = this.current5MinPrice;
             this.current5MinPrice = payload.current5MinPrice;
             this.currentHourPrice = payload.currentHourPrice;
+	    this.currentTime = new Date(payload.currentTime);
             this.updateDom();
         }
     },
@@ -37,7 +39,7 @@ Module.register("MMM-ComEdPricing", {
 
             let arrowElement = document.createElement("div");
             if (this.last5MinPrice !== null) {
-                if (this.current5MinPrice > this.last5MinPrice) {
+                if ((this.current5MinPrice > this.last5MinPrice) && (this.current5MinPrice > 4.0)) {
                     arrowElement.innerHTML = "&#9650;"; // Up arrow
                     arrowElement.style.color = "red";
                 } else if (this.current5MinPrice < this.last5MinPrice) {
@@ -49,9 +51,14 @@ Module.register("MMM-ComEdPricing", {
                 }
             }
 
+	    let timeOfData = document.createElement("div");
+	    timeOfData.innerHTML = `Data as of: ${this.currentTime.toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })}`;
+	    timeOfData.style.fontSize = "small";
+
             wrapper.appendChild(priceElement);
             wrapper.appendChild(hourPriceElement);
             wrapper.appendChild(arrowElement);
+	    wrapper.appendChild(timeOfData);
         } else {
             wrapper.innerHTML = "Loading...";
         }

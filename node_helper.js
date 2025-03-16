@@ -22,7 +22,8 @@ module.exports = NodeHelper.create({
             const current5MinPrice = parseFloat(responses[0][0].price);
             const last5MinPrice = parseFloat(responses[0][1].price);
             const currentHourPrice = parseFloat(responses[1][0].price);
-            this.sendSocketNotification("DATA_FETCHED", { current5MinPrice, last5MinPrice, currentHourPrice });
+	    const currentTime = parseFloat(responses[0][0].millisUTC);
+            this.sendSocketNotification("DATA_FETCHED", { current5MinPrice, last5MinPrice, currentHourPrice, currentTime});
         } catch (error) {
             console.error("Error fetching data:", error);
         }
