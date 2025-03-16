@@ -2,7 +2,8 @@
 
 The MMM-ComEdPricing module is designed for [MagicMirror²](https://github.com/MichMich/MagicMirror) to display the current hourly average and 5 minute pricing for ComEd. 
 
-![image](https://github.com/skruglov2023/MMM-ComEdPricing/assets/55259393/2a364512-3840-440f-a60d-c9e5a4f4b9c2)
+![image](https://github.com/user-attachments/assets/a0352b03-68c8-4dab-bec5-bcb729ced430)
+
 
 ## Installation
 
