@@ -13,7 +13,7 @@ module.exports = NodeHelper.create({
 
     async fetchData() {
         try {
-            const fetch = (await import("node-fetch")).default;
+            // Use the built-in fetch API available in Node.js 18+
             const responses = await Promise.all([
                 fetch("https://hourlypricing.comed.com/api?type=5minutefeed").then(res => res.json()),
                 fetch("https://hourlypricing.comed.com/api?type=currenthouraverage").then(res => res.json())
@@ -22,8 +22,9 @@ module.exports = NodeHelper.create({
             const current5MinPrice = parseFloat(responses[0][0].price);
             const last5MinPrice = parseFloat(responses[0][1].price);
             const currentHourPrice = parseFloat(responses[1][0].price);
-	    const currentTime = parseFloat(responses[0][0].millisUTC);
-            this.sendSocketNotification("DATA_FETCHED", { current5MinPrice, last5MinPrice, currentHourPrice, currentTime});
+            const currentTime = parseFloat(responses[0][0].millisUTC);
+            
+            this.sendSocketNotification("DATA_FETCHED", { current5MinPrice, last5MinPrice, currentHourPrice, currentTime });
         } catch (error) {
             console.error("Error fetching data:", error);
         }
